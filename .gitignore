@@ -27,3 +27,4 @@ yarn-error.log*
 static/main.wasm
 static/wasm_exec.js
 
+gistio

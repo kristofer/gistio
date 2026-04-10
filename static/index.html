@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>goRenderMand • Writing for Hackers</title>
+  <title>goRenderMand • Render Markdown for Hackers</title>
   <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css">
   <link href="https://fonts.googleapis.com/css?family=Lato:700,700i,300i|Source+Code+Pro:300,600" rel="stylesheet">
   <link rel="stylesheet" href="/static/fonts.css">
@@ -119,7 +119,7 @@
 
     // --------------- Page renderers ---------------
     function showHome() {
-      document.title = 'goRenderMand \u2022 Writing for Hackers';
+      document.title = 'goRenderMand \u2022 Render Markdown for Hackers';
       document.getElementById('app').innerHTML = `
         <div class="mw7-ns center ph2 mv4 f3-ns f4 content">
           <h1 class="f-5-ns f1 mt5 mt6-ns noligs">goRenderMand <span class="fw3 i f2-ns f3 moon-gray">\u2014</span><br>Writing for Hackers</h1>
@@ -140,9 +140,7 @@
           <h3>GitHub Gist shortcut</h3>
           <ol>
             <li><a href="https://gist.github.com" target="_blank">Create a gist</a> on GitHub with a single <a href="https://commonmark.org/help/" target="_blank">Markdown</a>-syntax file.</li>
-            <li>In the URL bar, replace<br>
-              <code><strong>gist.github.com/youruser</strong>/abc123\u2026</code> with<br>
-              <code><strong>gist.io/@youruser</strong>/abc123\u2026</code>.</li>
+            <li>In the URL bar, paste your gist URL<br>
             <li>Enjoy your beautifully-presented writing.</li>
           </ol>
 
@@ -189,7 +187,7 @@
         header +
         '<div class="content f3-ns f4">' + html + '</div>' +
         '<footer><div class="pt3 mt5 bt b--light-gray gray i">' +
-        '<a href="/">goRenderMand</a> &middot; writing for hackers &middot; zero setup &middot; publish in seconds' +
+        '<a href="/">goRenderMand</a> &middot; render markdown for hackers &middot; zero setup &middot; publish in seconds' +
         '</div>' +
         '<p class="f7 gray">\u00a9 CodeHavn, 2026. All rights reserved.</p>' +
         '</footer>' +
