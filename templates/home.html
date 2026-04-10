@@ -11,25 +11,37 @@
 </head>
 <body>
   <div class="mw7-ns center ph2 mv4 f3-ns f4 content">
-    <h1 class="f-5-ns f1 mt5 mt6-ns noligs">Gist.io <span class="fw3 i f2-ns f3 moon-gray">is</span><br>Writing for Hackers</h1>
-    <p>There's a scale of permanence to writing on the web. On one end, we have the tweet: brief and ephemeral. On the other end of the scale, we have longform blog writing: unlimited in length and hopefully impervious to the passage of time.</p>
-    <p>Sometimes, we want to share a bit of writing that is neither. Maybe we want to write for a specific audience, but don't want to address the people who usually read our blogs. Maybe it's just something that doesn't fit into 140 characters.</p>
-    <p>Gist.io is a solution for that, inspired by Mike Bostock's delightful <a href="https://bl.ocks.org" target="_blank">bl.ocks.org</a></p>
-    <h3>Usage</h3>
+    <h1 class="f-5-ns f1 mt5 mt6-ns noligs">goRenderMand <span class="fw3 i f2-ns f3 moon-gray">—</span><br>Writing for Hackers</h1>
+
+    <h3>The Story</h3>
+    <p>This project began as <strong>gist.io</strong>, a wonderfully simple service created by Idan Gazit that let you share GitHub Gists as beautifully-rendered Markdown pages. The original was a Node.js application that delighted developers who wanted zero-setup publishing.</p>
+    <p>When it came time to breathe new life into it, we translated the whole thing into a warm, self-contained <strong>Go</strong> application. The server is pure Go, and Markdown is rendered right in the browser via a tiny <strong>WebAssembly</strong> module — also written in Go — so there is no external render service to depend on.</p>
+    <p>The result is <strong>goRenderMand</strong>: the same spirit of effortless Markdown publishing, now running on a fast, single-binary Go backend. Paste a URL, get a beautifully-formatted page.</p>
+
+    <h3>Render any public Markdown URL</h3>
+    <form id="url-form" onsubmit="handleUrlSubmit(event)">
+      <input class="url-input pa2 ba b--light-silver br2 f5 mv2" type="url" id="md-url"
+        placeholder="https://raw.githubusercontent.com/user/repo/main/README.md"
+        required>
+      <button class="ml2 pa2 ba b--silver br2 pointer f5" type="submit">Render</button>
+    </form>
+
+    <h3>GitHub Gist shortcut</h3>
     <ol>
-      <li><a href="https://gist.github.com">Create a gist</a> on GitHub with a single <a href="https://commonmark.org/help/">Markdown</a>-syntax file.</li>
+      <li><a href="https://gist.github.com" target="_blank">Create a gist</a> on GitHub with a single <a href="https://commonmark.org/help/" target="_blank">Markdown</a>-syntax file.</li>
       <li>In the URL bar, replace<br>
         <code><strong>gist.github.com/youruser</strong>/abc123…</code> with<br>
         <code><strong>gist.io/@youruser</strong>/abc123…</code>.</li>
       <li>Enjoy your beautifully-presented writing.</li>
     </ol>
+
     <p>Happy writing!</p>
-    <p>Idan Gazit</p>
-    <p>
-      <a href="https://gazit.me">Web</a> /
-      <a href="https://twitter.com/idangazit">Twitter</a> /
-      <a href="https://github.com/idan">GitHub</a>
-    </p>
+
+    <p><a href="/" target="_blank">Open a new tab to paste a different URL →</a></p>
+
+    <footer class="pt3 mt5 bt b--light-gray">
+      <p class="f7 gray">&#169; CodeHavn, 2026. All rights reserved.</p>
+    </footer>
   </div>
 </body>
 </html>
