@@ -1,44 +1,64 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Gist.io
 
-## Available Scripts
+A Go application that renders public Markdown files beautifully in the browser.
+Markdown rendering runs entirely in a **Go WebAssembly (WASM)** module — no server-side rendering required.
 
-In the project directory, you can run:
+## How it works
 
-### `npm start`
+1. The browser loads a tiny HTML shell (`static/index.html`).
+2. A Go WASM module (`static/main.wasm`) is loaded in the browser; it exposes `window.renderMarkdown(text) → html` using [goldmark](https://github.com/yuin/goldmark) with paraiso-dark syntax highlighting.
+3. The Go HTTP server provides a `/proxy?url=<encoded-url>` endpoint that fetches any public HTTPS markdown file, bypassing browser CORS restrictions.
+4. The JavaScript SPA shell fetches the markdown via the proxy and calls the WASM function to render it.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Usage
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+### Render any public Markdown URL
 
-### `npm test`
+Visit `/?url=https://raw.githubusercontent.com/user/repo/main/README.md`
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Or paste the URL into the input form on the home page.
 
-### `npm run build`
+### GitHub Gist shortcut (backward-compatible)
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Replace `gist.github.com/youruser/abc123` with `gist.io/@youruser/abc123`.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+## Building
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Requires [Go 1.21+](https://golang.org/dl/).
 
-### `npm run eject`
+```sh
+# Build the WASM module and the server binary
+make
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# Start the server (default port 8080, override with PORT env var)
+./gistio
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+`make` does the following in order:
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+1. `GOARCH=wasm GOOS=js go build -o static/main.wasm ./wasm/` — compiles the Go WASM module.
+2. Copies `wasm_exec.js` from your Go installation into `static/`.
+3. `go build -o gistio .` — compiles the HTTP server.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Individual targets
 
-## Learn More
+| Command | Description |
+|---|---|
+| `make wasm` | Build only the WASM module |
+| `make server` | Build only the server binary (requires WASM built first) |
+| `make run` | Build everything and start the server |
+| `make clean` | Remove build artifacts |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Project layout
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+wasm/main.go          Go WASM module — markdown renderer exported to JS
+main.go               Go HTTP server — static files, font embedding, /proxy endpoint
+static/index.html     SPA shell — routing, WASM loading, URL input form
+static/style.css      Base styles
+static/fonts.css      Custom font declarations
+static/main.wasm      (build artifact) compiled Go WASM module
+static/wasm_exec.js   (build artifact) Go WASM runtime helper
+src/fonts/            Embedded Elena web fonts
+Makefile              Build orchestration
+```
