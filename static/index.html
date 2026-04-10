@@ -23,9 +23,30 @@
   <script>
     // --------------- WASM bootstrap ---------------
     const go = new Go();
+    function waitForWasmRenderer(timeoutMs) {
+      return new Promise((resolve, reject) => {
+        const started = Date.now();
+        (function check() {
+          if (typeof window.renderMarkdown === 'function') {
+            resolve();
+            return;
+          }
+          if (Date.now() - started > timeoutMs) {
+            reject(new Error('WASM renderer failed to initialize'));
+            return;
+          }
+          setTimeout(check, 10);
+        })();
+      });
+    }
+
     const wasmReady = WebAssembly
       .instantiateStreaming(fetch('/static/main.wasm'), go.importObject)
-      .then(result => go.run(result.instance));
+      .then(result => {
+        // go.run() resolves only when the Go program exits; do not await it.
+        go.run(result.instance);
+        return waitForWasmRenderer(3000);
+      });
 
     // --------------- Routing helpers ---------------
     /**
@@ -36,10 +57,58 @@
      *   /?url=<encoded-url>   render any public markdown URL
      *   /@user/id             render a GitHub Gist (backward-compat)
      */
+    function normalizeMarkdownUrl(input) {
+      if (!input) return null;
+      let parsed;
+      try {
+        parsed = new URL(input);
+      } catch (_) {
+        return input;
+      }
+
+      // Convert common GitHub/Gist browsing URLs to direct raw content URLs.
+      const host = parsed.hostname.toLowerCase();
+      const parts = parsed.pathname.split('/').filter(Boolean);
+      if (host === 'github.com') {
+        // /owner/repo/blob/branch/path/to/file.md -> raw.githubusercontent.com/owner/repo/branch/path/to/file.md
+        if (parts.length >= 5 && parts[2] === 'blob') {
+          const owner = parts[0];
+          const repo = parts[1];
+          const branch = parts[3];
+          const filePath = parts.slice(4).join('/');
+          return 'https://raw.githubusercontent.com/' + owner + '/' + repo + '/' + branch + '/' + filePath;
+        }
+
+        // /owner/repo/raw/branch/path/to/file.md -> raw.githubusercontent.com/owner/repo/branch/path/to/file.md
+        if (parts.length >= 5 && parts[2] === 'raw') {
+          const owner = parts[0];
+          const repo = parts[1];
+          const branch = parts[3];
+          const filePath = parts.slice(4).join('/');
+          return 'https://raw.githubusercontent.com/' + owner + '/' + repo + '/' + branch + '/' + filePath;
+        }
+      }
+
+      if (host === 'gist.github.com') {
+        // gist.github.com/user/id[/filename] -> gist.githubusercontent.com/user/id/raw[/filename]
+        if (parts.length >= 2) {
+          const user = parts[0];
+          const id = parts[1];
+          const maybeFile = parts.slice(2).join('/');
+          if (maybeFile) {
+            return 'https://gist.githubusercontent.com/' + user + '/' + id + '/raw/' + maybeFile;
+          }
+          return 'https://gist.githubusercontent.com/' + user + '/' + id + '/raw';
+        }
+      }
+
+      return input;
+    }
+
     function getMarkdownUrl() {
       const params = new URLSearchParams(window.location.search);
       const u = params.get('url');
-      if (u) return u;
+      if (u) return normalizeMarkdownUrl(u);
 
       const gist = window.location.pathname.match(/^\/@([^/]+)\/([^/]+)/);
       if (gist) {
@@ -148,10 +217,11 @@
 
     function handleUrlSubmit(evt) {
       evt.preventDefault();
-      const url = document.getElementById('md-url').value.trim();
-      if (!url) return;
-      window.history.pushState({}, '', '/?url=' + encodeURIComponent(url));
-      renderMarkdownUrl(url);
+      const inputUrl = document.getElementById('md-url').value.trim();
+      if (!inputUrl) return;
+      const mdUrl = normalizeMarkdownUrl(inputUrl);
+      window.history.pushState({}, '', '/?url=' + encodeURIComponent(mdUrl));
+      renderMarkdownUrl(mdUrl);
     }
 
     // --------------- Init ---------------

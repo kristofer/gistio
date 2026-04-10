@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 // Fonts are always present in the repository and are embedded in the binary.
@@ -17,6 +18,8 @@ import (
 
 //go:embed src/fonts
 var fontFiles embed.FS
+
+var proxyClient = &http.Client{Timeout: 15 * time.Second}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -74,7 +77,8 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid URL", http.StatusBadRequest)
 		return
 	}
-	resp, err := http.DefaultClient.Do(req)
+	req.Header.Set("User-Agent", "gistio/1.0 (+https://github.com/kristofer/gistio)")
+	resp, err := proxyClient.Do(req)
 	if err != nil {
 		http.Error(w, "failed to fetch URL", http.StatusBadGateway)
 		return
