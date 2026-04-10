@@ -1,0 +1,41 @@
+/* ElenaWebBasic — served from /fonts/ by the Go server */
+
+@font-face {
+  font-family: 'ElenaWebBasic';
+  src: url('/fonts/ElenaWebBasicLight/ElenaWebBasicLight.eot');
+  src: url('/fonts/ElenaWebBasicLight/ElenaWebBasicLight.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/ElenaWebBasicLight/ElenaWebBasicLight.woff2') format('woff2'),
+       url('/fonts/ElenaWebBasicLight/ElenaWebBasicLight.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ElenaWebBasic';
+  src: url('/fonts/ElenaWebBasicLightItalic/ElenaWebBasicLightItalic.eot');
+  src: url('/fonts/ElenaWebBasicLightItalic/ElenaWebBasicLightItalic.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/ElenaWebBasicLightItalic/ElenaWebBasicLightItalic.woff2') format('woff2'),
+       url('/fonts/ElenaWebBasicLightItalic/ElenaWebBasicLightItalic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'ElenaWebBasic';
+  src: url('/fonts/ElenaWebBasicMedium/ElenaWebBasicMedium.eot');
+  src: url('/fonts/ElenaWebBasicMedium/ElenaWebBasicMedium.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/ElenaWebBasicMedium/ElenaWebBasicMedium.woff2') format('woff2'),
+       url('/fonts/ElenaWebBasicMedium/ElenaWebBasicMedium.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ElenaWebBasic';
+  src: url('/fonts/ElenaWebBasicMediumItalic/ElenaWebBasicMediumItalic.eot');
+  src: url('/fonts/ElenaWebBasicMediumItalic/ElenaWebBasicMediumItalic.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/ElenaWebBasicMediumItalic/ElenaWebBasicMediumItalic.woff2') format('woff2'),
+       url('/fonts/ElenaWebBasicMediumItalic/ElenaWebBasicMediumItalic.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:700,700i,300i|Source+Code+Pro:300,600" rel="stylesheet">
+  <link rel="stylesheet" href="/static/fonts.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <title>{{.Title}}</title>
+</head>
+<body>
+  <article class="mw7-ns center ph2 mv4">
+    <header class="mv4 f6">
+      <a href="https://github.com/{{.User}}/" target="_blank">@&thinsp;{{.User}}</a>&thinsp;/&thinsp;<a href="https://gist.github.com/{{.User}}/{{.ID}}" target="_blank">{{.ID}}</a>
+    </header>
+    <div class="content f3-ns f4">
+      {{.Content}}
+    </div>
+    <footer>
+      <div class="pt3 mt5 bt b--light-gray gray i">
+        <a href="/">gist.io</a> &middot; writing for hackers &middot; zero setup &middot; publish in seconds
+      </div>
+    </footer>
+  </article>
+</body>
+</html>
