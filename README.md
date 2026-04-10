@@ -1,4 +1,4 @@
-# Gist.io
+# GoRenderMand (a port of Gist.io)
 
 A Go application that renders public Markdown files beautifully in the browser.
 Markdown rendering runs entirely in a **Go WebAssembly (WASM)** module — no server-side rendering required.
