@@ -30,11 +30,13 @@ func init() {
 // renderMarkdown is exported to JavaScript as window.renderMarkdown(text) → html.
 func renderMarkdown(this js.Value, args []js.Value) any {
 	if len(args) < 1 {
+		js.Global().Get("console").Call("error", "renderMarkdown: requires a text argument")
 		return ""
 	}
 	raw := args[0].String()
 	var buf bytes.Buffer
 	if err := md.Convert([]byte(raw), &buf); err != nil {
+		js.Global().Get("console").Call("error", "renderMarkdown: markdown conversion failed: "+err.Error())
 		return ""
 	}
 	return buf.String()

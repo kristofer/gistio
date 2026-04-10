@@ -69,7 +69,12 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := http.Get(rawURL) //nolint:noctx
+	req, err := http.NewRequestWithContext(r.Context(), http.MethodGet, rawURL, nil)
+	if err != nil {
+		http.Error(w, "invalid URL", http.StatusBadRequest)
+		return
+	}
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		http.Error(w, "failed to fetch URL", http.StatusBadGateway)
 		return
