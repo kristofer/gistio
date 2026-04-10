@@ -1,0 +1,19 @@
+# Don't send git history or tooling configs to the Docker daemon.
+.git
+.gitignore
+
+# Node / legacy front-end artefacts (not used by the Go build).
+node_modules
+yarn.lock
+package.json
+tsconfig.json
+public
+
+# Compiled output that will be rebuilt inside the container.
+/gistio
+/static/main.wasm
+/static/wasm_exec.js
+
+# Misc
+*.log
+.DS_Store

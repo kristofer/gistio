@@ -1,7 +1,7 @@
 GOROOT := $(shell go env GOROOT)
 WASM_EXEC_JS := $(GOROOT)/lib/wasm/wasm_exec.js
 
-.PHONY: all wasm server clean
+.PHONY: all wasm server clean docker-build docker-run
 
 ## all: build WASM module then the server binary (default target)
 all: wasm server
@@ -22,3 +22,11 @@ run: all
 ## clean: remove build artifacts
 clean:
 	rm -f static/main.wasm static/wasm_exec.js gistio
+
+## docker-build: build the Docker image (tagged gistio)
+docker-build:
+	docker build -t gistio .
+
+## docker-run: run the pre-built Docker image on port 8080
+docker-run:
+	docker run --rm -p 8080:8080 gistio
