@@ -48,6 +48,46 @@ make
 | `make server` | Build only the server binary (requires WASM built first) |
 | `make run` | Build everything and start the server |
 | `make clean` | Remove build artifacts |
+| `make docker-build` | Build the Docker image (tagged `gistio`) |
+| `make docker-run` | Run the Docker image on port 8080 |
+
+## Docker
+
+The repository ships with a multi-stage `Dockerfile` that handles the full
+build — you don't need Go installed locally.
+
+### Build and run with Docker
+
+```sh
+# Build the image (compiles WASM + server inside the container)
+docker build -t gistio .
+
+# Run on port 8080
+docker run --rm -p 8080:8080 gistio
+
+# Use a different host port (e.g. 3000 → 8080 inside container)
+docker run --rm -p 3000:8080 gistio
+```
+
+Open <http://localhost:8080> in your browser.
+
+### Build and run with Docker Compose
+
+```sh
+docker compose up --build
+```
+
+To run on a different host port set the `PORT` variable:
+
+```sh
+PORT=3000 docker compose up --build
+```
+
+### Environment variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `8080` | TCP port the server listens on inside the container |
 
 ## Project layout
 
