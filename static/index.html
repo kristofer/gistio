@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gist.io • Writing for Hackers</title>
+  <title>goRenderMand • Writing for Hackers</title>
   <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css">
   <link href="https://fonts.googleapis.com/css?family=Lato:700,700i,300i|Source+Code+Pro:300,600" rel="stylesheet">
   <link rel="stylesheet" href="/static/fonts.css">
@@ -119,13 +119,15 @@
 
     // --------------- Page renderers ---------------
     function showHome() {
-      document.title = 'Gist.io \u2022 Writing for Hackers';
+      document.title = 'goRenderMand \u2022 Writing for Hackers';
       document.getElementById('app').innerHTML = `
         <div class="mw7-ns center ph2 mv4 f3-ns f4 content">
-          <h1 class="f-5-ns f1 mt5 mt6-ns noligs">Gist.io <span class="fw3 i f2-ns f3 moon-gray">is</span><br>Writing for Hackers</h1>
-          <p>There\u2019s a scale of permanence to writing on the web. On one end, we have the tweet: brief and ephemeral. On the other end of the scale, we have longform blog writing: unlimited in length and hopefully impervious to the passage of time.</p>
-          <p>Sometimes, we want to share a bit of writing that is neither. Maybe we want to write for a specific audience, but don\u2019t want to address the people who usually read our blogs. Maybe it\u2019s just something that doesn\u2019t fit into 140 characters.</p>
-          <p>Gist.io is a solution for that, inspired by Mike Bostock\u2019s delightful <a href="https://bl.ocks.org" target="_blank">bl.ocks.org</a></p>
+          <h1 class="f-5-ns f1 mt5 mt6-ns noligs">goRenderMand <span class="fw3 i f2-ns f3 moon-gray">\u2014</span><br>Writing for Hackers</h1>
+
+          <h3>The Story</h3>
+          <p>This project began as <strong>gist.io</strong>, a wonderfully simple service created by Idan Gazit that let you share GitHub Gists as beautifully-rendered Markdown pages. The original was a Node.js application that delighted developers who wanted zero-setup publishing.</p>
+          <p>When it came time to breathe new life into it, we translated the whole thing into a warm, self-contained <strong>Go</strong> application. The server is pure Go, and Markdown is rendered right in the browser via a tiny <strong>WebAssembly</strong> module \u2014 also written in Go \u2014 so there is no external render service to depend on.</p>
+          <p>The result is <strong>goRenderMand</strong>: the same spirit of effortless Markdown publishing, now running on a fast, single-binary Go backend. Paste a URL, get a beautifully-formatted page.</p>
 
           <h3>Render any public Markdown URL</h3>
           <form id="url-form" onsubmit="handleUrlSubmit(event)">
@@ -145,13 +147,17 @@
           </ol>
 
           <p>Happy writing!</p>
-          <p>Idan Gazit</p>
-          <p><a href="https://gazit.me">Web</a> / <a href="https://twitter.com/idangazit">Twitter</a> / <a href="https://github.com/idan">GitHub</a></p>
+
+          <p><a href="/" target="_blank">Open a new tab to paste a different URL \u2192</a></p>
+
+          <footer class="pt3 mt5 bt b--light-gray">
+            <p class="f7 gray">\u00a9 CodeHavn, 2026. All rights reserved.</p>
+          </footer>
         </div>`;
     }
 
     function showLoading() {
-      document.title = 'Gist.io \u2022 Loading\u2026';
+      document.title = 'goRenderMand \u2022 Loading\u2026';
       document.getElementById('app').innerHTML =
         '<p class="mw7-ns center ph2 mv4">Loading\u2026</p>';
     }
@@ -168,7 +174,7 @@
       let header = '';
       if (gist) {
         const user = gist[1], id = gist[2];
-        document.title = 'Gist.io \u2022 @' + user + '/' + id;
+        document.title = 'goRenderMand \u2022 @' + user + '/' + id;
         header =
           '<header class="mv4 f6">' +
           '<a href="https://github.com/' + escapeHTML(user) + '/" target="_blank">@\u2009' + escapeHTML(user) + '</a>' +
@@ -176,15 +182,17 @@
           '<a href="https://gist.github.com/' + escapeHTML(user) + '/' + escapeHTML(id) + '" target="_blank">' + escapeHTML(id) + '</a>' +
           '</header>';
       } else {
-        document.title = 'Gist.io \u2022 ' + mdUrl;
+        document.title = 'goRenderMand \u2022 ' + mdUrl;
       }
       document.getElementById('app').innerHTML =
         '<article class="mw7-ns center ph2 mv4">' +
         header +
         '<div class="content f3-ns f4">' + html + '</div>' +
         '<footer><div class="pt3 mt5 bt b--light-gray gray i">' +
-        '<a href="/">gist.io</a> &middot; writing for hackers &middot; zero setup &middot; publish in seconds' +
-        '</div></footer>' +
+        '<a href="/">goRenderMand</a> &middot; writing for hackers &middot; zero setup &middot; publish in seconds' +
+        '</div>' +
+        '<p class="f7 gray">\u00a9 CodeHavn, 2026. All rights reserved.</p>' +
+        '</footer>' +
         '</article>';
     }
 
