@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gist.io • Writing for Hackers</title>
+  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:700,700i,300i|Source+Code+Pro:300,600" rel="stylesheet">
+  <link rel="stylesheet" href="/static/fonts.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    #spinner { display: none; }
+    #spinner.active { display: block; }
+    .error { color: #c0392b; }
+    pre { overflow-x: auto; }
+    .url-input { width: 100%; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="/static/wasm_exec.js"></script>
+  <script>
+    // --------------- WASM bootstrap ---------------
+    const go = new Go();
+    const wasmReady = WebAssembly
+      .instantiateStreaming(fetch('/static/main.wasm'), go.importObject)
+      .then(result => go.run(result.instance));
+
+    // --------------- Routing helpers ---------------
+    /**
+     * Returns the markdown URL to render based on the current browser location,
+     * or null if we should show the home page.
+     *
+     * Supported patterns:
+     *   /?url=<encoded-url>   render any public markdown URL
+     *   /@user/id             render a GitHub Gist (backward-compat)
+     */
+    function getMarkdownUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const u = params.get('url');
+      if (u) return u;
+
+      const gist = window.location.pathname.match(/^\/@([^/]+)\/([^/]+)/);
+      if (gist) {
+        return 'https://gist.githubusercontent.com/' + gist[1] + '/' + gist[2] + '/raw';
+      }
+      return null;
+    }
+
+    // --------------- Page renderers ---------------
+    function showHome() {
+      document.title = 'Gist.io \u2022 Writing for Hackers';
+      document.getElementById('app').innerHTML = `
+        <div class="mw7-ns center ph2 mv4 f3-ns f4 content">
+          <h1 class="f-5-ns f1 mt5 mt6-ns noligs">Gist.io <span class="fw3 i f2-ns f3 moon-gray">is</span><br>Writing for Hackers</h1>
+          <p>There\u2019s a scale of permanence to writing on the web. On one end, we have the tweet: brief and ephemeral. On the other end of the scale, we have longform blog writing: unlimited in length and hopefully impervious to the passage of time.</p>
+          <p>Sometimes, we want to share a bit of writing that is neither. Maybe we want to write for a specific audience, but don\u2019t want to address the people who usually read our blogs. Maybe it\u2019s just something that doesn\u2019t fit into 140 characters.</p>
+          <p>Gist.io is a solution for that, inspired by Mike Bostock\u2019s delightful <a href="https://bl.ocks.org" target="_blank">bl.ocks.org</a></p>
+
+          <h3>Render any public Markdown URL</h3>
+          <form id="url-form" onsubmit="handleUrlSubmit(event)">
+            <input class="url-input pa2 ba b--light-silver br2 f5 mv2" type="url" id="md-url"
+              placeholder="https://raw.githubusercontent.com/user/repo/main/README.md"
+              required>
+            <button class="ml2 pa2 ba b--silver br2 pointer f5" type="submit">Render</button>
+          </form>
+
+          <h3>GitHub Gist shortcut</h3>
+          <ol>
+            <li><a href="https://gist.github.com" target="_blank">Create a gist</a> on GitHub with a single <a href="https://commonmark.org/help/" target="_blank">Markdown</a>-syntax file.</li>
+            <li>In the URL bar, replace<br>
+              <code><strong>gist.github.com/youruser</strong>/abc123\u2026</code> with<br>
+              <code><strong>gist.io/@youruser</strong>/abc123\u2026</code>.</li>
+            <li>Enjoy your beautifully-presented writing.</li>
+          </ol>
+
+          <p>Happy writing!</p>
+          <p>Idan Gazit</p>
+          <p><a href="https://gazit.me">Web</a> / <a href="https://twitter.com/idangazit">Twitter</a> / <a href="https://github.com/idan">GitHub</a></p>
+        </div>`;
+    }
+
+    function showLoading() {
+      document.title = 'Gist.io \u2022 Loading\u2026';
+      document.getElementById('app').innerHTML =
+        '<p class="mw7-ns center ph2 mv4">Loading\u2026</p>';
+    }
+
+    function showError(msg) {
+      document.getElementById('app').innerHTML =
+        '<div class="mw7-ns center ph2 mv4">' +
+        '<p class="error">Error: ' + escapeHTML(msg) + '</p>' +
+        '<p><a href="/">&#8592; Back</a></p></div>';
+    }
+
+    function showContent(mdUrl, html) {
+      const gist = mdUrl.match(/gist\.githubusercontent\.com\/([^/]+)\/([^/]+)/);
+      let header = '';
+      if (gist) {
+        const user = gist[1], id = gist[2];
+        document.title = 'Gist.io \u2022 @' + user + '/' + id;
+        header =
+          '<header class="mv4 f6">' +
+          '<a href="https://github.com/' + escapeHTML(user) + '/" target="_blank">@\u2009' + escapeHTML(user) + '</a>' +
+          '\u2009/\u2009' +
+          '<a href="https://gist.github.com/' + escapeHTML(user) + '/' + escapeHTML(id) + '" target="_blank">' + escapeHTML(id) + '</a>' +
+          '</header>';
+      } else {
+        document.title = 'Gist.io \u2022 ' + mdUrl;
+      }
+      document.getElementById('app').innerHTML =
+        '<article class="mw7-ns center ph2 mv4">' +
+        header +
+        '<div class="content f3-ns f4">' + html + '</div>' +
+        '<footer><div class="pt3 mt5 bt b--light-gray gray i">' +
+        '<a href="/">gist.io</a> &middot; writing for hackers &middot; zero setup &middot; publish in seconds' +
+        '</div></footer>' +
+        '</article>';
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+    }
+
+    // --------------- Main render flow ---------------
+    async function renderMarkdownUrl(mdUrl) {
+      showLoading();
+      try {
+        // Fetch markdown content and wait for WASM to be ready in parallel.
+        const [text] = await Promise.all([
+          fetch('/proxy?url=' + encodeURIComponent(mdUrl)).then(resp => {
+            if (!resp.ok) throw new Error('HTTP ' + resp.status + ' fetching markdown');
+            return resp.text();
+          }),
+          wasmReady,
+        ]);
+        const html = window.renderMarkdown(text);
+        showContent(mdUrl, html);
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    function handleUrlSubmit(evt) {
+      evt.preventDefault();
+      const url = document.getElementById('md-url').value.trim();
+      if (!url) return;
+      window.history.pushState({}, '', '/?url=' + encodeURIComponent(url));
+      renderMarkdownUrl(url);
+    }
+
+    // --------------- Init ---------------
+    (function init() {
+      const mdUrl = getMarkdownUrl();
+      if (mdUrl) {
+        renderMarkdownUrl(mdUrl);
+      } else {
+        showHome();
+      }
+    })();
+  </script>
+</body>
+</html>
