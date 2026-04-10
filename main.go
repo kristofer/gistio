@@ -52,11 +52,17 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Embedded static files (CSS).
-	staticFS, _ := fs.Sub(staticFiles, "static")
+	staticFS, err := fs.Sub(staticFiles, "static")
+	if err != nil {
+		log.Fatalf("static embed: %v", err)
+	}
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))))
 
 	// Embedded font files served from src/fonts/.
-	fontsFS, _ := fs.Sub(fontFiles, "src/fonts")
+	fontsFS, err := fs.Sub(fontFiles, "src/fonts")
+	if err != nil {
+		log.Fatalf("fonts embed: %v", err)
+	}
 	mux.Handle("/fonts/", http.StripPrefix("/fonts/", http.FileServer(http.FS(fontsFS))))
 
 	// Page routes — all unmatched paths go through dispatch.

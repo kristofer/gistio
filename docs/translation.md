@@ -97,7 +97,7 @@ gist before responding, so the browser always receives a fully-rendered page.
 
 ## Building
 
-Requires Go 1.21 or later.
+Requires Go 1.22 or later.
 
 ```bash
 # Fetch dependencies
